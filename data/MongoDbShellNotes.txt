@@ -1,0 +1,44 @@
+db.inventory.insertMany([
+   { item: "journal", qty: 25, size: { h: 14, w: 21, uom: "cm" }, status: "A" },
+   { item: "notebook", qty: 50, size: { h: 8.5, w: 11, uom: "in" }, status: "A" },
+   { item: "paper", qty: 100, size: { h: 8.5, w: 11, uom: "in" }, status: "D" },
+   { item: "planner", qty: 75, size: { h: 22.85, w: 30, uom: "cm" }, status: "D" },
+   { item: "postcard", qty: 45, size: { h: 10, w: 15.25, uom: "cm" }, status: "A" }
+]);
+
+db.inventory.find({"status":"A"}).count()
+db.inventory.find({"status":{$in: ["A","D"]}})
+db.inventory.find( { $or: [ { status: "A" }, { qty: { $lt: 30 } } ] } )
+db.inventory.find({$or:[{"status": "A"},{"qty":{$lt: 30}}]}).pretty()
+db.inventory.find({"qty":{$lt:30}})
+db.inventory.find({"qty":{$gte:50}})
+db.inventory.find({$and: [{"qty":{$lte: 75}},{"qty":{$gte: 45}}]})
+
+db.inventory.find( {
+     status: "A",
+     $or: [ { qty: { $lt: 30 } }, { item: /^p/ } ]
+} )
+
+db.inventory.find({"status": "A"},{$or:[{"qty":{$lt: 30}},{"item": /^p/}]})
+db.inventory.find({$or:[{"qty":{$lt: 30}},{"item": /^p/}]})
+db.inventory.find({"status": "A"},{"item": /^p/})			# This is also and, but here only last column will be visible in the result
+db.inventory.find({$and: [{"item":/^p/},{"status":"A"}]})	# This is a proper way of performing and operation
+
+****************************************************************************************************************************************************
+
+db.inventory.insertMany([
+   { item: "journal", qty: 25, tags: ["blank", "red"], dim_cm: [ 14, 21 ] },
+   { item: "notebook", qty: 50, tags: ["red", "blank"], dim_cm: [ 14, 21 ] },
+   { item: "paper", qty: 100, tags: ["red", "blank", "plain"], dim_cm: [ 14, 21 ] },
+   { item: "planner", qty: 75, tags: ["blank", "red"], dim_cm: [ 22.85, 30 ] },
+   { item: "postcard", qty: 45, tags: ["blue"], dim_cm: [ 10, 15.25 ] }
+]);
+
+db.inventory.find({"tags":["red","blank"]})			# maintains strict order
+db.inventory.find({"tags":{$all:["red","blank"]}})	# search both element inside array, no order is maintained
+db.inventory.find( { tags: "red" } )				# search read tags for any order
+
+	 
+	 
+	 
+	 
